@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { getTodolist, insertTodo } from './firebase/api';
 
 function App() {
+  const [todolist, setTodolist] = useState([]);
+  useEffect(() => {
+    getTodolist().then(resp => {
+      setTodolist(Object.values(resp));
+    });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +26,12 @@ function App() {
         >
           Learn React
         </a>
+        <ul>
+          {todolist.map(t => (
+            <li>{t.name}</li>
+          ))}
+        </ul>
+        <button onClick={() => insertTodo('test')}>insert</button>
       </header>
     </div>
   );
