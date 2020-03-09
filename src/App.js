@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { todolistRef, addTodo } from './firebase/api';
+import { removeTodo, addTodo, getTodo } from './firebase/api';
 import './App.css';
 
 function App() {
   const [todolist, setTodolist] = useState([]);
   const [todo, setTodo] = useState('');
+
   useEffect(() => {
-    todolistRef.on('value', snapshot => {
-      setTodolist(Object.values(snapshot.val()));
-    });
+    getTodo().subscribe(data => setTodolist(data));
   }, []);
 
   const handleChange = e => setTodo(e.target.value);
@@ -19,16 +18,23 @@ function App() {
     setTodo('');
   };
 
+  const handleRemoveTodo = key => {
+    removeTodo(key);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <input onChange={handleChange} value={todo} />
+        <button onClick={handleAddTodo}>Add</button>
         <ul>
           {todolist.map(t => (
-            <li>{t.name}</li>
+            <li key={t.key}>
+              {t.name}
+              <button onClick={() => handleRemoveTodo(t.key)}>delete</button>
+            </li>
           ))}
         </ul>
-        <button onClick={handleAddTodo}>Add</button>
       </header>
     </div>
   );
