@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-import { removeTodo, addTodo, getTodo } from './firebase/api';
+import {
+  removeTodo,
+  addTodo,
+  getTodo,
+  checkLogin,
+  signOut
+} from './firebase/api';
 import './App.css';
 
 function App() {
@@ -8,7 +14,9 @@ function App() {
   const [todo, setTodo] = useState('');
 
   useEffect(() => {
-    getTodo().subscribe(data => setTodolist(data));
+    checkLogin().then(() => {
+      getTodo().subscribe(data => setTodolist(data));
+    });
   }, []);
 
   const handleChange = e => setTodo(e.target.value);
@@ -35,6 +43,7 @@ function App() {
             </li>
           ))}
         </ul>
+        <button onClick={() => signOut()}>sign out</button>
       </header>
     </div>
   );
