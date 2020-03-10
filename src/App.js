@@ -4,8 +4,10 @@ import {
   removeTodo,
   addTodo,
   getTodo,
+  updateTodo,
   checkLogin,
-  signOut
+  logout,
+  login
 } from './firebase/api';
 import './App.css';
 
@@ -14,20 +16,32 @@ function App() {
   const [todo, setTodo] = useState('');
 
   useEffect(() => {
-    checkLogin().then(() => {
-      getTodo().subscribe(data => setTodolist(data));
+    checkLogin().subscribe(user => {
+      if (user) {
+        console.log('login success!', user);
+        getTodo().subscribe(data => setTodolist(data));
+      } else {
+        login();
+      }
     });
   }, []);
 
   const handleChange = e => setTodo(e.target.value);
 
   const handleAddTodo = () => {
+    if (todo.length === 0) {
+      return;
+    }
     addTodo(todo);
     setTodo('');
   };
 
   const handleRemoveTodo = key => {
     removeTodo(key);
+  };
+
+  const handleUpdateTodo = (key, status) => {
+    updateTodo(key, status);
   };
 
   return (
@@ -38,12 +52,18 @@ function App() {
         <ul>
           {todolist.map(t => (
             <li key={t.key}>
-              {t.name}
+              {!t.isFinished ? (
+                <span onClick={() => handleUpdateTodo(t.key, true)}>
+                  {t.name}
+                </span>
+              ) : (
+                <s onClick={() => handleUpdateTodo(t.key, false)}>{t.name}</s>
+              )}
               <button onClick={() => handleRemoveTodo(t.key)}>delete</button>
             </li>
           ))}
         </ul>
-        <button onClick={() => signOut()}>sign out</button>
+        <button onClick={() => logout()}>log out</button>
       </header>
     </div>
   );

@@ -2,39 +2,30 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import { list } from 'rxfire/database';
+import { authState } from 'rxfire/auth';
 import { map } from 'rxjs/operators';
 
 import { config } from './config';
 
-firebase.initializeApp(config);
+const app = firebase.initializeApp(config);
 const database = firebase.database();
+const auth = firebase.auth();
 const todolistRef = database.ref('todolist');
 
-const getUid = () => firebase.auth().currentUser.uid;
+const getUid = () => auth.currentUser.uid;
 
 export const login = () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({
     prompt: 'select_account'
   });
-  firebase.auth().signInWithRedirect(provider);
+  auth.signInWithRedirect(provider);
 };
 
-export const checkLogin = () => {
-  return new Promise(resolve => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        resolve(user);
-      } else {
-        login();
-      }
-    });
-  });
-};
+export const checkLogin = () => authState(app.auth());
 
-export const signOut = () =>
-  firebase
-    .auth()
+export const logout = () =>
+  auth
     .signOut()
     .then(() => {
       console.log('logout success!');
@@ -56,7 +47,7 @@ export const getTodo = () => {
 export const addTodo = name => {
   todolistRef.child(getUid()).push({
     name,
-    status: 0
+    isFinished: false
   });
 };
 
@@ -65,4 +56,13 @@ export const removeTodo = key => {
     .child(getUid())
     .child(key)
     .remove();
+};
+
+export const updateTodo = (key, status) => {
+  todolistRef
+    .child(getUid())
+    .child(key)
+    .update({
+      isFinished: status
+    });
 };
