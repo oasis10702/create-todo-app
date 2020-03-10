@@ -46,11 +46,14 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <h1>TODOLIST</h1>
+      <div className="todolist__input">
         <input onChange={handleChange} value={todo} />
-        <button onClick={handleAddTodo}>Add</button>
-        <ul>
-          {todolist.map(t => (
+        <button onClick={handleAddTodo}>ADD</button>
+      </div>
+      <ul className="todolist__list">
+        {todolist.length ? (
+          todolist.map(t => (
             <li key={t.key}>
               {!t.isFinished ? (
                 <span onClick={() => handleUpdateTodo(t.key, true)}>
@@ -59,12 +62,14 @@ function App() {
               ) : (
                 <s onClick={() => handleUpdateTodo(t.key, false)}>{t.name}</s>
               )}
-              <button onClick={() => handleRemoveTodo(t.key)}>delete</button>
+              <button onClick={() => handleRemoveTodo(t.key)}>DELETE</button>
             </li>
-          ))}
-        </ul>
-        <button onClick={() => logout()}>log out</button>
-      </header>
+          ))
+        ) : (
+          <h2>Loading...</h2>
+        )}
+      </ul>
+      <button onClick={() => logout()}>LOGOUT</button>
     </div>
   );
 }
