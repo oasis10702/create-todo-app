@@ -2,8 +2,10 @@ This project is demoed for create-todo-app<br>
 
 ## Add Firebase to Your Project
 
-- Go to [Firebase Console](https://console.firebase.google.com/), and create a new project called create-todo-app.
+- Go to [Firebase Console](https://console.firebase.google.com/), and create a new project.
+
 - Create a new Realtime Database and make Firebase Authentication with Google account available.
+
 - Create config file in this project, and put your API key, projectID, databaseURL and authDomain into it.
 
 ```
